@@ -3,19 +3,18 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useEmployees } from '../contexts/EmployeeContext';
-import type { Employee } from '../types';
 import { PhoneIcon, MailIcon, GlobeIcon } from '../components/icons';
 import { QRCodeCanvas } from 'qrcode.react';
 
 const BusinessCardView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getEmployeeById, isLoading } = useEmployees();
+  // Destructure error and isSheetMode to handle data loading failures gracefully.
+  const { getEmployeeById, isLoading, error, isSheetMode } = useEmployees();
 
-  // Directly derive the employee from the context on each render. This is a more robust pattern
-  // that avoids the race condition seen when using useEffect and local state on a direct page load.
+  // Directly derive the employee from the context on each render.
   const employee = id ? getEmployeeById(id) : undefined;
 
-  // Display a loading state while the initial data fetch is in progress.
+  // 1. Display a loading state while the initial data fetch is in progress.
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -27,8 +26,21 @@ const BusinessCardView: React.FC = () => {
     );
   }
 
-  // If loading is complete and no employee matches the ID, display a "Not Found" message
-  // styled to match the provided screenshot.
+  // 2. NEW: If in sheet mode and an error occurred, show a specific data fetch error.
+  // This is crucial for diagnosing issues with the Google Sheet URL or connection.
+  if (isSheetMode && error) {
+    return (
+       <div className="flex items-center justify-center min-h-screen bg-red-50 p-4">
+        <div className="w-full max-w-lg text-center p-8 bg-white rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-red-600">Failed to Load Data</h2>
+          <p className="text-gray-600 mt-3">There was a problem loading data from the Google Sheet.</p>
+          <p className="text-sm text-gray-500 mt-4 bg-gray-100 p-3 rounded-md break-words">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. If loading is complete and no employee matches the ID, then display "Not Found".
   if (!employee) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-brand-secondary p-4">
