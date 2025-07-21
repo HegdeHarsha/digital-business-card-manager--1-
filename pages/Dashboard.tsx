@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useEmployees } from '../contexts/EmployeeContext';
 import EmployeeCard from '../components/EmployeeCard';
@@ -39,7 +40,7 @@ const EmployeeDetailModal: React.FC<{ employee: Employee; onClose: () => void }>
       ? 'opacity-0 scale-95'
       : 'opacity-100 scale-100';
       
-    const shareUrl = `${window.location.origin}${window.location.pathname}#/view/${employee.id}`;
+    const shareUrl = window.location.href.split('#')[0] + '#/view/' + employee.id;
 
     return (
         <div 
