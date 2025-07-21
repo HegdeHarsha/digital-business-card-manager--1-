@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { EmployeeProvider, useEmployees } from './contexts/EmployeeContext';
 import Dashboard from './pages/Dashboard';
 import CardForm from './pages/CardForm';
@@ -10,14 +10,14 @@ import SettingsModal from './components/SettingsModal';
 const App: React.FC = () => {
   return (
     <EmployeeProvider>
-      <HashRouter>
+      <BrowserRouter>
         <div className="min-h-screen bg-gray-100 text-gray-800 font-sans">
           <Routes>
             <Route path="/view/:id" element={<BusinessCardView />} />
             <Route path="/*" element={<AdminLayout />} />
           </Routes>
         </div>
-      </HashRouter>
+      </BrowserRouter>
     </EmployeeProvider>
   );
 };

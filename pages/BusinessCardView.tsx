@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useEmployees } from '../contexts/EmployeeContext';
@@ -39,7 +40,7 @@ const BusinessCardView: React.FC = () => {
     );
   }
   
-  const shareUrl = `${window.location.href.split('#')[0]}#/view/${employee.id}`;
+  const shareUrl = new URL(`/view/${employee.id}`, window.location.origin).href;
 
   const ContactItem: React.FC<{ icon: React.ReactNode; text: string; link: string; }> = ({ icon, text, link }) => (
     <a href={link} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">

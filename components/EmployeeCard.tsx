@@ -20,7 +20,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onCardClick }) =>
   };
 
   const handleShare = () => {
-    const shareLink = `${window.location.origin}${window.location.pathname}#/view/${employee.id}`;
+    const shareLink = new URL(`/view/${employee.id}`, window.location.origin).href;
     navigator.clipboard.writeText(shareLink);
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 2000);

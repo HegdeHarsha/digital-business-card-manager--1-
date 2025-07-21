@@ -40,7 +40,7 @@ const EmployeeDetailModal: React.FC<{ employee: Employee; onClose: () => void }>
       ? 'opacity-0 scale-95'
       : 'opacity-100 scale-100';
       
-    const shareUrl = window.location.href.split('#')[0] + '#/view/' + employee.id;
+    const shareUrl = new URL(`/view/${employee.id}`, window.location.origin).href;
 
     return (
         <div 
