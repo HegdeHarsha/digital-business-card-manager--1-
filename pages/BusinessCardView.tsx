@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useEmployees } from '../contexts/EmployeeContext';
@@ -8,17 +7,32 @@ import { QRCodeCanvas } from 'qrcode.react';
 
 const BusinessCardView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getEmployeeById } = useEmployees();
-  const [employee, setEmployee] = useState<Employee | null>(null);
+  const { getEmployeeById, isLoading } = useEmployees();
+  // undefined: initial state, null: not found after loading, Employee: found
+  const [employee, setEmployee] = useState<Employee | undefined | null>(undefined);
 
   useEffect(() => {
-    if (id) {
+    // Only try to find the employee once loading is complete
+    if (!isLoading && id) {
       const foundEmployee = getEmployeeById(id);
       setEmployee(foundEmployee ?? null);
     }
-  }, [id, getEmployeeById]);
+  }, [id, getEmployeeById, isLoading]);
 
-  if (!employee) {
+  // Show loading screen while fetching data or before the check has run
+  if (isLoading || employee === undefined) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div className="text-center p-10 bg-white rounded-lg shadow-xl">
+          <h2 className="text-2xl font-bold">Loading Business Card...</h2>
+          <p className="text-gray-600 mt-2">Please wait a moment.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show not found screen if loading is done and employee is still not found
+  if (employee === null) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-200">
         <div className="text-center p-10 bg-white rounded-lg shadow-xl">
@@ -29,7 +43,7 @@ const BusinessCardView: React.FC = () => {
     );
   }
   
-  const shareUrl = `${window.location.origin}${window.location.pathname}#/view/${employee.id}`;
+  const shareUrl = window.location.href.split('#')[0] + '#/view/' + employee.id;
 
   const ContactItem: React.FC<{ icon: React.ReactNode; text: string; link: string; }> = ({ icon, text, link }) => (
     <a href={link} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
